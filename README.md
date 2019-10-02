@@ -50,3 +50,37 @@ $$x_5/(x_4+x_5+x_6) <= .4 $$
  $$ .6x_4-.4x_5-.4x_6<=0$$
  $$ .35x_4-.65x_5+.35x_6<=0$$
  $$ -.4x_4+.6x_5-.4x_6<=0$$
+
+
+ import numpy as np
+from scipy.optimize import linprog
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
+
+venta=np.array([1.1,1.1,1.1,1.2,1.2,1.2])
+costo=np.array([.3,.4,.48,.3,.4,.48])
+ganancia=-(venta-costo) # Se pone signo menos porque se quiere maximizar
+
+A=[[-1,-1,-1,0,0,0], # Requerimientos de producción, signo negativo porque la condición debe ser <=
+  [0,0,0,-1,-1,-1], # Requerimientos de producción, signo negativo porque la condición debe ser <=
+  [1,0,0,1,0,0], # Restricciones de disponibilidad
+  [0,1,0,0,1,0], # Restricciones de disponibilidad
+  [0,0,1,0,0,1], # Restricciones de disponibilidad
+  [-.7,.3,.3,0,0,0], #Restricciones de composición mezcla 1
+  [-.5,.5,-.5,0,0,0], #Restricciones de composición mezcla 1
+  [.3,.3,-.7,0,0,0], #Restricciones de composición mezcla 1
+  [0,0,0,.6,-.4,-.4], #Restricciones de composición mezcla 2
+  [0,0,0,.35,-.65,.35],#Restricciones de composición mezcla 2
+  [0,0,0,-.4,-.4,.6]] #Restricciones de composición mezcla 2
+
+b=[-10000,-10000,6000,10000,12000,0,0,0,0,0,0] #vector de restricciones
+
+nombres=["A en mezcla 1","B en mezcla 1","C en mezcla 1","A en mezcla 2","B en mezcla 2","C en mezcla 2","Utilidad"]
+
+res = linprog(c=ganancia,A_ub=A,b_ub=b,method="interior-point")
+print(res)
+
+
+
